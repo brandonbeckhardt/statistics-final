@@ -8,16 +8,30 @@ In your terminal, go to a folder you want the final project in.  Clone the repos
 Once cloned, go into the repository:
 `cd 109`
 
-## Pushing to github
-When you make changes you want to add to github run.
-`git commit`
-
-Give a name to the changes you made.  Then run:
-`git push origin master`
+## Notes
+Any changes you make on your local repository will not impact the master branch on git.  To update the information you have on your computer and to update the information on the git repository, read below.
 
 ## Pulling from github
 
 To get the most recent version of the code run:
 `git pull`
 
-Note, try to avoid pulling with uncommitted changes.  If you must do so, read about [Stashing](https://git-scm.com/book/no-nb/v1/Git-Tools-Stashing)
+Note, this will override your local changes if you have no committed them.  Try to avoid pulling with uncommitted changes.  If you must do so, read about [Stashing](https://git-scm.com/book/no-nb/v1/Git-Tools-Stashing).
+
+
+## Pushing to github
+When you make changes locally you want to add to github run.
+'git add .'
+This will tell git what changes you want to add to the repository.  There are other commands you can use if you only want to add specific things.  This is usually the safest if you just want to add all of the changes you've made.
+
+
+To give a name and description to all of the changes you've made, run:
+`git commit`
+ 
+
+Then, to get the code to the master branch on git, run:
+`git push origin master`
+
+
+
+
