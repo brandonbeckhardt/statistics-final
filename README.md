@@ -5,7 +5,7 @@ In your terminal, go to a folder you want the final project in.  Clone the repos
 `git clone https://github.com/brandonbeckhardt/statistics-final`
 
 Once cloned, go into the repository:
-`cd 109`
+`cd statistics-final`
 
 ## Notes
 Any changes you make on your local repository will not impact the master branch on git.  To update the information you have on your computer and to update the information on the git repository, read below.
