@@ -1,9 +1,8 @@
-# 109
-Project
+# Probability and Statistics Project
 
 ## Setup
 In your terminal, go to a folder you want the final project in.  Clone the repository with the command:
-`git clone https://github.com/brandonbeckhardt/109`
+`git clone https://github.com/brandonbeckhardt/statistics-final`
 
 Once cloned, go into the repository:
 `cd 109`
