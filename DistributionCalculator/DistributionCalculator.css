@@ -1,0 +1,20 @@
+.prompt{
+	display: inline-block;
+}
+.formInputWrapper{
+	position: relative;
+}
+#distributionInfo{
+	width: 200px;
+	display: inline-block;
+}
+.parameterName{
+	display: inline-block;
+}
+.parameterInput{
+	display: inline-block;
+}
+.parameterInfo{
+	margin: 10px;
+	width: 300px;
+}

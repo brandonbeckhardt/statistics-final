@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Distribution Calculator</title>
+	<script src="DistributionCalculator.js"></script>
+	<link rel="stylesheet" type="text/css" href="DistributionCalculator.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
+<body>
+	<h2>Distribution Calculator</h2>
+	<form id="distributionInfo" method="post">
+		<div class = "formInputWrapper">
+			<div class = "propmt">
+				Please choose a distribution:
+			</div>
+			<div>
+			<select class ="form-control" id="distributionType" onchange="showParameterInputs(this.value)">
+				<option value = "Bernoulli">Bernoulli</option>
+				<option value = "Binomial">Binomial</option>
+				<option value = "Poisson">Poisson</option>
+				<option value = "Negative Binomial">Negative Binomial</option>
+				<option value = "Geometric">Geometric</option>
+				<option value ="Hypergeometric">Hypergeometric</option>
+				<option value = "Normal">Normal</option>
+				<option value = "Exponential">Exponential</option>
+				<option value = "Uniform">Uniform</option>
+			</select>
+		</div>
+
+	</div>
+	<div id="parameterWrapper">
+	</div>
+			<button type="button"id="submit" onclick="submitForm()">Find the Probability</button>
+	</form>
+</body>
+</html>
