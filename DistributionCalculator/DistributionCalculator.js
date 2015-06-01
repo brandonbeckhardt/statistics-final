@@ -39,4 +39,22 @@ function showParameterInputs(value){
 		parameterInfo.appendChild(input);
 		parameterWrapper.appendChild(parameterInfo);
 	}
+		var paramName = document.createTextNode("Value you want: ");
+		paramName.className = "parameterName";
+		var input = document.createElement("input");
+		input.type= "number";
+		input.className = "parameterInput";
+		input.name = "i";
+
+		var parameterInfo = document.createElement("div");
+		parameterInfo.className = "parameterInfo";
+
+		parameterInfo.appendChild(paramName);
+		parameterInfo.appendChild(input);
+		parameterWrapper.appendChild(parameterInfo);
+	
+}
+
+function bernoulli(i){
+	if()
 }

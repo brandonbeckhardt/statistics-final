@@ -36,7 +36,7 @@ public class LogisticRegression{
    		//update all bk
 		for(int k = 0; k <= m; k++) beta[k] += n * gradient[k];
 	}
-}
+	}
 }
 // System.out.println("Hello, World");
 
