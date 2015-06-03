@@ -66,12 +66,6 @@ public class LogisticRegression{
      return z;
     }
 
-
-
-
-
-
-
     private static void formatDataFromFile(String nameOfFile){
         // The name of the file to open.
         String fileName = nameOfFile;
