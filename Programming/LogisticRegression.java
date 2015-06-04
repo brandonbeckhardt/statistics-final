@@ -22,42 +22,64 @@ public class LogisticRegression{
         return instances;
     }
 
-	public static void main(String[] args) { 
-		if (args.length!= 0) formatDataFromFile(args[0]);
+
+    public static double[] train(String file){
+        if (file != null) formatDataFromFile(file);
         System.out.println(Arrays.deepToString(dataFromFile));
 
         double n = .00001;
         int m = numOfInputVariables;
         //Array of arrays containing instances.  X0 is always 1.  Xm+1 is Y
         int instances[][] = createInstanceVectors(dataFromFile,m);
-		double[] beta = new double[m+1];
-		for(int i = 0; i < m; i++) beta[i] = 0;
-		int epochs = 100000;
-   	    // for each pass over dataset
-		for(int e = 0; e < epochs; e++){
+        double[] beta = new double[m+1];
+        for(int i = 0; i < m; i++) beta[i] = 0;
+        int epochs = 10000;
+        // for each pass over dataset
+        for(int e = 0; e < epochs; e++){
             double[] gradient = new double[m+1];
-			int[] z = calculateZ(beta,instances,m);
-   		   //calculate batch gradient vector for each gradient
-			for(int kthInput=0; kthInput <= m; kthInput++){
-				gradient[kthInput] = 0;
-   				//iterate through all training instances in data
-				for(int ithTVar = 0; ithTVar < numOfDataVectors; ithTVar++){
-					int xInstance = instances[ithTVar][kthInput];
-					int yInstance = instances[ithTVar][m+1]; 
-					double eToZ = Math.exp(-z[ithTVar]);
-					gradient[kthInput] += xInstance*(yInstance-(1/(1+eToZ)));
-				}
-			}       
+            double[] z = calculateZ(beta,instances,m);
+           //calculate batch gradient vector for each gradient
+            for(int kthInput=0; kthInput <= m; kthInput++){
+                gradient[kthInput] = 0;
+                //iterate through all training instances in data
+                for(int ithTVar = 0; ithTVar < numOfDataVectors; ithTVar++){
+                    int xInstance = instances[ithTVar][kthInput];
+                    int yInstance = instances[ithTVar][m+1]; 
+                    double eToZ = Math.exp(-z[ithTVar]);
+                    gradient[kthInput] += xInstance*(yInstance-(1/(1+eToZ)));
+                }
+            }       
         //update all bk
             for(int k = 0; k <= m; k++) beta[k] += n * gradient[k];
-		}
-    System.out.println("Here");
+        }
+        System.out.println("Here");
         System.out.println(Arrays.toString(beta));
+        return beta;
+    }
+
+    public static void test(String file, double[] beta, int oldm){
+        if (file != null) formatDataFromFile(file);
+        int newm = numOfInputVariables;
+        //did i properly account for x0 = 1 and beta0 = alpha?
+        int instances[][] = createInstanceVectors(dataFromFile,newm);
+        double[] zs = calculateZ(beta, instances, newm);
+        for(int i =0; i <= newm; i++){
+            double z = zs[i];
+            double eToZ = Math.exp(-z);
+            double probability = 1/(1+eToZ);
+            System.out.println(probability);
+        }
+    }
+
+
+	public static void main(String[] args) { 
+		double[] beta = train(args[0]);
+        test(args[1], beta, numOfInputVariables);
 	}
 
 
-    public static int[] calculateZ(double[] beta,int[][] instances,int m){
-     int[] z = new int[numOfDataVectors];
+    public static double[] calculateZ(double[] beta,int[][] instances,int m){
+     double[] z = new double[numOfDataVectors];
      for(int i = 0; i < numOfDataVectors; i++){
         int[] instance = instances[i];
         for(int j = 0; j <= m; j++)
