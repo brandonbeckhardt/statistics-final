@@ -1,82 +1,45 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.lang.*;
 
 public class LogisticRegression{ 
 	public static int numOfInputVariables = 0;
     public static int numOfDataVectors = 0;
     public static int[][] dataFromFile;
+    public static HashMap<Integer, Integer> actualClassifications;
+    public static int[] actualValues;
 
 
     // X0 is always 1.  Xm+1 is Y
-    public static int[][] createInstanceVectors(int[][] data, int m){
+    public static int[][] createInstanceVectors(int[][] data, int m, Boolean test){
         // +2 because we want the Instance[0] = 1, and Instance[M+1] equal to Y
-        int[][] instances = new int[numOfDataVectors][numOfInputVariables + 2];
+        int[][] instances = new int[numOfDataVectors][m + 2];
+        int[] values = new int[numOfDataVectors];
+        HashMap<Integer, Integer> classifications = new HashMap<Integer, Integer>();
 
         for(int i=0; i < numOfDataVectors; i++){
             instances[i][0] = 1;
             for(int k = 1; k <= m+1; k++){   
                 instances[i][k] = data[i][k-1];
+
+                if(test && k == m+1) {
+                    values[i] = instances[i][k];
+                    if(classifications.containsKey(instances[i][k])){
+                        int count = classifications.get(instances[i][k]);
+                        classifications.put(instances[i][k], count+1);
+                    } else {
+                        classifications.put(instances[i][k], 1);
+                    }
+                }
             }
+        }
+        if(test) {
+            actualValues = values;
+            actualClassifications = classifications;
         }
         return instances;
     }
-
-
-    public static double[] train(String file){
-        if (file != null) formatDataFromFile(file);
-        System.out.println(Arrays.deepToString(dataFromFile));
-
-        double n = .00001;
-        int m = numOfInputVariables;
-        //Array of arrays containing instances.  X0 is always 1.  Xm+1 is Y
-        int instances[][] = createInstanceVectors(dataFromFile,m);
-        double[] beta = new double[m+1];
-        for(int i = 0; i < m; i++) beta[i] = 0;
-        int epochs = 10000;
-        // for each pass over dataset
-        for(int e = 0; e < epochs; e++){
-            double[] gradient = new double[m+1];
-            double[] z = calculateZ(beta,instances,m);
-           //calculate batch gradient vector for each gradient
-            for(int kthInput=0; kthInput <= m; kthInput++){
-                gradient[kthInput] = 0;
-                //iterate through all training instances in data
-                for(int ithTVar = 0; ithTVar < numOfDataVectors; ithTVar++){
-                    int xInstance = instances[ithTVar][kthInput];
-                    int yInstance = instances[ithTVar][m+1]; 
-                    double eToZ = Math.exp(-z[ithTVar]);
-                    gradient[kthInput] += xInstance*(yInstance-(1/(1+eToZ)));
-                }
-            }       
-        //update all bk
-            for(int k = 0; k <= m; k++) beta[k] += n * gradient[k];
-        }
-        System.out.println("Here");
-        System.out.println(Arrays.toString(beta));
-        return beta;
-    }
-
-    public static void test(String file, double[] beta, int oldm){
-        if (file != null) formatDataFromFile(file);
-        int newm = numOfInputVariables;
-        //did i properly account for x0 = 1 and beta0 = alpha?
-        int instances[][] = createInstanceVectors(dataFromFile,newm);
-        double[] zs = calculateZ(beta, instances, newm);
-        for(int i =0; i <= newm; i++){
-            double z = zs[i];
-            double eToZ = Math.exp(-z);
-            double probability = 1/(1+eToZ);
-            System.out.println(probability);
-        }
-    }
-
-
-	public static void main(String[] args) { 
-		double[] beta = train(args[0]);
-        test(args[1], beta, numOfInputVariables);
-	}
-
 
     public static double[] calculateZ(double[] beta,int[][] instances,int m){
      double[] z = new double[numOfDataVectors];
@@ -87,6 +50,78 @@ public class LogisticRegression{
      }
      return z;
     }
+
+    public static double[] train(String file){
+        if (file != null) formatDataFromFile(file);
+        double n = 0.0001;
+        int m = numOfInputVariables;
+        //Array of arrays containing instances.  X0 is always 1.  Xm+1 is Y
+        int instances[][] = createInstanceVectors(dataFromFile,m, false);
+        //Array of betas. B0 is alpha.  All initialized to 0
+        double[] beta = new double[m+1];
+
+        int epochs = 10000;
+        // for each pass over dataset
+        for(int e = 0; e < epochs; e++){
+            double[] gradient = new double[m+1];
+
+            double[] zs = calculateZ(beta,instances,m);
+           //calculate batch gradient vector for each gradient
+            for(int kthInput=0; kthInput <= m; kthInput++){
+                //iterate through all training instances in data
+                for(int instance = 0; instance < numOfDataVectors; instance++){
+                    int xInstance = instances[instance][kthInput];
+                    int yInstance = instances[instance][m+1]; 
+                    double eToZ = Math.exp(-zs[instance]);
+                    gradient[kthInput] += xInstance*(yInstance-(1/(1+eToZ)));
+                }
+            }       
+        //update all bk
+            for(int k = 0; k <= m; k++) beta[k] += n * gradient[k];
+        }
+        return beta;
+    }
+
+    public static HashMap<Integer, Integer> test(String file, double[] beta){
+        if (file != null) formatDataFromFile(file);
+        int newm = numOfInputVariables;
+        HashMap<Integer, Integer> properlyTested = new HashMap<Integer, Integer> ();
+        int instances[][] = createInstanceVectors(dataFromFile,newm, true);
+        double[] zs = calculateZ(beta, instances, newm);
+        for(int i =0; i < numOfDataVectors; i++){
+            double eToZ = Math.exp(-zs[i]);
+             // double probabilityOf0 = eToZ/(1+eToZ);
+            double probabilityOf1 = 1/(1+eToZ);
+            int classification = 0;
+            if (probabilityOf1 > .5 ){
+                 classification = 1;
+            }
+            if(classification == actualValues[i]){
+                if(properlyTested.containsKey(classification)){
+                    int count = properlyTested.get(classification);
+                    properlyTested.put(classification, count+1);
+                } else{
+                    properlyTested.put(classification,1);
+                }
+            }
+        }
+        return properlyTested;
+    }
+
+
+	public static void main(String[] args) { 
+		double[] beta = train(args[0]);
+        // System.out.println(beta);
+        HashMap<Integer, Integer> properlyTested = test(args[1], beta);
+
+        System.out.println("Class 0: tested " + actualClassifications.get(0) + ", correctly classified "+ properlyTested.get(0));
+        System.out.println("Class 1: tested " + actualClassifications.get(1) + ", correctly classified "+ properlyTested.get(1));
+        int totalTested = actualClassifications.get(0) + actualClassifications.get(1);
+        int totalProperlyTested = properlyTested.get(0) + properlyTested.get(1);
+        System.out.println("Overall: tested " + totalTested + ", correctly classified " + totalProperlyTested);
+        double accuracy = (double)totalProperlyTested/(double)totalTested;
+        System.out.println("Accuracy = " + accuracy);
+	}
 
     private static void formatDataFromFile(String nameOfFile){
         // The name of the file to open.
@@ -106,18 +141,18 @@ public class LogisticRegression{
                 line = bufferedReader.readLine();
                 if (i == 0){
                     numOfInputVariables = Integer.parseInt(line);
-                    System.out.println(numOfInputVariables);
+                    // System.out.println(numOfInputVariables);
                 }
                 if (i == 1){
                     numOfDataVectors = Integer.parseInt(line);
-                    System.out.println(numOfDataVectors);
+                    // System.out.println(numOfDataVectors);
                 }
             }
             dataFromFile = new int[numOfDataVectors][numOfInputVariables+1]; //+1 because we want room for Y var
             int numOfDigits = 0;
             for (int a = 0; a < numOfDataVectors; a++){
                 line = bufferedReader.readLine();
-                System.out.println(line);
+                // System.out.println(line);
                 for (int i = 0;i <line.length();i++) {
                     if (Character.isDigit(line.charAt(i))){
                         dataFromFile[a][numOfDigits] = Character.getNumericValue(line.charAt(i));
@@ -128,7 +163,7 @@ public class LogisticRegression{
                     }
                 }
             }    
-            System.out.println(Arrays.deepToString(dataFromFile));
+            // System.out.println(Arrays.deepToString(dataFromFile));
             // Always close files.
             bufferedReader.close();            
         }

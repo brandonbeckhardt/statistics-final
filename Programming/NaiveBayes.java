@@ -359,9 +359,6 @@ public class NaiveBayes {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
         /*end of cited code*/
-
-
-
         if(train){
             //stores values for:
             //numOfInputVariables = first number from first line parsed
@@ -431,15 +428,10 @@ public class NaiveBayes {
 
             } 
         }
-
-
-
         /*Code below is taken from: https://www.caveofprogramming.com/java/java-file-reading-and-writing-files-in-java.html 
             It is taken from the section "Reading Ordinary Text Files in Java"
         */
-
         }
-
         catch(FileNotFoundException ex) {
             System.out.println(
                 "Unable to open file '" + 
